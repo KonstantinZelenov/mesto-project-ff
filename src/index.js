@@ -56,7 +56,7 @@ function openEditPopup() {
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
   
-  openPopup(popup, closePopupOnEsc); 
+  openPopup(popup); 
 }
 
 // Кнопка отрытия модального окна добавления карточки
@@ -66,7 +66,7 @@ cardAddButton.addEventListener('click', addCardPopup);
 function addCardPopup() {
   const popup = document.querySelector('.popup_type_new-card');
   
-  openPopup(popup, closePopupOnEsc);
+  openPopup(popup);
 }
 
 // Функция открытия модального окна с картинкой
@@ -79,7 +79,7 @@ function handleImageClick(card) {
   popupImage.alt = card.name;
   popupCaption.textContent = card.name;
 
-  openPopup(popup, closePopupOnEsc);
+  openPopup(popup);
 }
 // ЗАКОНЧИЛИ ФУНКЦИОНАЛ ОТКРЫТИЯ МОДАЛЬНЫХ ОКОН
 
@@ -87,30 +87,12 @@ function handleImageClick(card) {
 // ФУНКЦИОНАЛ ЗАКРЫТИЯ МОДАЛЬНЫХ ОКОН
 const popups = document.querySelectorAll('.popup');
 
-document.addEventListener('click', closeByOverlayClick);
-
 popups.forEach((popup) => {
   popup.querySelector('.popup__close').addEventListener('click', closePopupByButtonClick);
 });
 
-// Закрытие попапа при нажатии клавиши "Escape"
-function closePopupOnEsc(e) {
-  if (e.key === 'Escape') {
-    const openedPopup = document.querySelector('.popup_is-opened');
-    if (openedPopup) {
-    closePopup(openedPopup, closePopupOnEsc);
-    }
-  }
-}
 
-// Закрытие попапа при клике на оверлей
-function closeByOverlayClick(e) {
-  if (e.target.classList.contains('popup')) {
-    const popup = e.target;
-    
-    closePopup(popup);
-  }
-};
+
 
 // Закрытие попапа при клике на кнопку
 function closePopupByButtonClick(event) {
@@ -134,3 +116,35 @@ function profileFormSubmit(evt) {
 
 // Прикрепляем обработчик к форме для обработки события «submit»
 profileForm.addEventListener('submit', profileFormSubmit);
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
