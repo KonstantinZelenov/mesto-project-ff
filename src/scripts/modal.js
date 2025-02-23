@@ -1,3 +1,4 @@
+
 // Функция для открытия попапа
 export function openPopup(popup, closePopupOnEsc) {
   popup.classList.add('popup_is-animated');
@@ -12,6 +13,10 @@ export function closePopup(popup, closePopupOnEsc) {
   popup.classList.remove('popup_is-opened');
   document.removeEventListener('keydown', closePopupOnEsc);
 }
+
+
+
+
 
 
 

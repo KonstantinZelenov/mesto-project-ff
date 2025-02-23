@@ -56,7 +56,7 @@ function openEditPopup() {
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
   
-  openPopup(popup); 
+  openPopup(popup, closePopupOnEsc); 
 }
 
 // Кнопка отрытия модального окна добавления карточки
@@ -66,7 +66,7 @@ cardAddButton.addEventListener('click', addCardPopup);
 function addCardPopup() {
   const popup = document.querySelector('.popup_type_new-card');
   
-  openPopup(popup);
+  openPopup(popup, closePopupOnEsc);
 }
 
 // Функция открытия модального окна с картинкой
@@ -79,7 +79,7 @@ function handleImageClick(card) {
   popupImage.alt = card.name;
   popupCaption.textContent = card.name;
 
-  openPopup(popup);
+  openPopup(popup, closePopupOnEsc);
 }
 // ЗАКОНЧИЛИ ФУНКЦИОНАЛ ОТКРЫТИЯ МОДАЛЬНЫХ ОКОН
 
@@ -87,7 +87,6 @@ function handleImageClick(card) {
 // ФУНКЦИОНАЛ ЗАКРЫТИЯ МОДАЛЬНЫХ ОКОН
 const popups = document.querySelectorAll('.popup');
 
-document.addEventListener('keydown', closePopupOnEsc);
 document.addEventListener('click', closeByOverlayClick);
 
 popups.forEach((popup) => {
@@ -98,8 +97,9 @@ popups.forEach((popup) => {
 function closePopupOnEsc(e) {
   if (e.key === 'Escape') {
     const openedPopup = document.querySelector('.popup_is-opened');
-    
-    closePopup(openedPopup);
+    if (openedPopup) {
+    closePopup(openedPopup, closePopupOnEsc);
+    }
   }
 }
 
@@ -134,35 +134,3 @@ function profileFormSubmit(evt) {
 
 // Прикрепляем обработчик к форме для обработки события «submit»
 profileForm.addEventListener('submit', profileFormSubmit);
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-
-
-
-
-
