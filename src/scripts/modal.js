@@ -1,7 +1,9 @@
 // Функция для открытия попапа
 export function openPopup(popup, closePopupOnEsc) {
-  popup.classList.add('popup_is-opened');
   popup.classList.add('popup_is-animated');
+  setTimeout(() => {
+   popup.classList.add('popup_is-opened'); 
+  }, 50);
   document.addEventListener('keydown', closePopupOnEsc);
 }
 
