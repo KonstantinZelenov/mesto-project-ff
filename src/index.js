@@ -25,27 +25,23 @@ const newCardForm = document.forms['new-place'];
 
 // Функция добавления новой карточки
 function addNewCard(card) {
-  const cardElement = createCard(card, deleteCard, toggleLike, handleImageClick);
-  placesList.prepend(cardElement);
+  const newCardElement = createCard(card, deleteCard, toggleLike, handleImageClick);
+  placesList.prepend(newCardElement);
 }
 
-// Обработчик отправки формы
-newCardForm.addEventListener('submit', (event) => {
-  event.preventDefault(); 
-
+// Обработчик отправки формы добавления карточки
+function profileAddCardFormSubmit(evt) {
+  evt.preventDefault();
   const name = newCardForm.elements['place-name'].value;
   const link = newCardForm.elements['link'].value;
-
-  // Создаем объект новой карточки
   const newCard = { name, link };
-
-  // Добавляем новую карточку в начало списка
   addNewCard(newCard);
 
-  // Закрываем попап и сбрасываем форму
   closePopup(newCardForm.closest('.popup'));
   newCardForm.reset();
-});
+}
+
+newCardForm.addEventListener('submit', profileAddCardFormSubmit);
 
 //ЗАКОНЧИЛ СОЗДАВАТЬ И УДАЛЯТЬ КАРТОЧКИ
 
@@ -127,7 +123,7 @@ function closePopupByButtonClick(event) {
 // ЗАКОНЧИЛИ ФУНКЦИОНАЛ ЗАКРЫТИЯ МОДАЛЬНЫХ ОКОН
 
 
-// Обработчик «отправки» формы, обновление профиля
+// Обработчик «отправки» формы обновления профиля
 function profileFormSubmit(evt) {
     evt.preventDefault();
     profileTitle.textContent = nameInput.value;
