@@ -1,7 +1,14 @@
 import {initialCards} from './scripts/cards.js';
-import {createCard, toggleLike, deleteCard, handleImageClick} from './scripts/card.js';
-import {addCardPopup, closeByEsc, closeByOverlayClick, closePopupByButtonClick} from './scripts/modal.js';
+import {createCard, toggleLike, deleteCard} from './scripts/card.js';
+import {openPopup, closePopup} from './scripts/modal.js';
 import './pages/index.css';
+
+// Находим форму изменения профиля в DOM
+const profileForm = document.forms['edit-profile'];
+const nameInput = profileForm.querySelector('.popup__input_type_name');
+const jobInput = profileForm.querySelector('.popup__input_type_description');
+const profileTitle = document.querySelector('.profile__title');
+const profileDescription = document.querySelector('.profile__description');
 
 
 // Вывожу все карточки из массива на страницу
@@ -36,91 +43,105 @@ newCardForm.addEventListener('submit', (event) => {
   addNewCard(newCard);
 
   // Закрываем попап и сбрасываем форму
-  closeNewCardForm(newCardForm.closest('.popup'));
+  closePopup(newCardForm.closest('.popup'));
   newCardForm.reset();
 });
-
-// Функция закрытия попапа
-function closeNewCardForm(popup) {
-  popup.classList.remove('popup_is-opened');
-  popup.classList.remove('popup_is-animated');
-
-  // Добавляем задержку перед анимацией закрытия
-  setTimeout(() => {
-    popup.style.visibility = 'hidden';
-    popup.style.opacity = '0';
-  }, 300); // Задержка 300 мс, соответствует времени анимации открытия
-}
 
 //ЗАКОНЧИЛ СОЗДАВАТЬ И УДАЛЯТЬ КАРТОЧКИ
 
 
 // ФУНКЦИОНАЛ ОТКРЫТИЯ МОДАЛЬНЫХ ОКОН
-// Кнопка отрытия редактирования профиля
+// Кнопка отрытия модального окна редактирования профиля
 const profileEditButton = document.querySelector('.profile__edit-button');
 profileEditButton.addEventListener('click', openEditPopup);
-//Функция открывающая модальное окно edit
-
-
-
+//Функция открывающая модальное окно редактирования профиля
+function openEditPopup() {
+  const popup = document.querySelector('.popup_type_edit');
+  nameInput.value = profileTitle.textContent;
+  jobInput.value = profileDescription.textContent;
+  
+  openPopup(popup); 
+}
 
 // Кнопка отрытия модального окна добавления карточки
 const cardAddButton = document.querySelector('.profile__add-button');
 cardAddButton.addEventListener('click', addCardPopup); 
+//Функция открывающая модальное окно добавления карточки
+function addCardPopup() {
+  const popup = document.querySelector('.popup_type_new-card');
+  
+  openPopup(popup);
+}
+
+// Функция открытия модального окна с картинкой
+function handleImageClick(card) {
+  const popup = document.querySelector('.popup_type_image');
+  const popupImage = popup.querySelector('.popup__image');
+  const popupCaption = popup.querySelector('.popup__caption');
+
+  popupImage.src = card.link;
+  popupImage.alt = card.name;
+  popupCaption.textContent = card.name;
+
+  openPopup(popup);
+}
 // ЗАКОНЧИЛИ ФУНКЦИОНАЛ ОТКРЫТИЯ МОДАЛЬНЫХ ОКОН
 
 
 // ФУНКЦИОНАЛ ЗАКРЫТИЯ МОДАЛЬНЫХ ОКОН
 const popups = document.querySelectorAll('.popup');
 
-document.addEventListener('click', closePopupByButtonClick);
-document.addEventListener('keydown', closeByEsc);
-
+document.addEventListener('keydown', closePopupOnEsc);
+document.addEventListener('click', closeByOverlayClick);
 
 popups.forEach((popup) => {
-  popup.addEventListener('click', closeByOverlayClick);
   popup.querySelector('.popup__close').addEventListener('click', closePopupByButtonClick);
 });
 
+// Закрытие попапа при нажатии клавиши "Escape"
+function closePopupOnEsc(e) {
+  if (e.key === 'Escape') {
+    const openedPopup = document.querySelector('.popup_is-opened');
+    
+    closePopup(openedPopup);
+  }
+}
+
+// Закрытие попапа при клике на оверлей
+function closeByOverlayClick(e) {
+  if (e.target.classList.contains('popup')) {
+    const popup = e.target;
+    
+    closePopup(popup);
+  }
+};
+
+// Закрытие попапа при клике на кнопку
+function closePopupByButtonClick(event) {
+  if (event.target.classList.contains('popup__close')) {
+    const popup = event.target.closest('.popup');
+    
+    closePopup(popup);
+  }
+}
 // ЗАКОНЧИЛИ ФУНКЦИОНАЛ ЗАКРЫТИЯ МОДАЛЬНЫХ ОКОН
 
 
-
-
-function openEditPopup() {
-  const popup = document.querySelector('.popup_type_edit');
-  nameInput.value = profileTitle.textContent;
-  jobInput.value = profileDescription.textContent;
-  popup.style.visibility = 'hidden';
-  popup.style.opacity = '0';
-  
-  if (!popup.classList.contains('popup_is-opened')) {
-    popup.classList.add('popup_is-opened');
-    // Добавляем задержку перед анимацией
-    setTimeout(() => {
-      popup.classList.add('popup_is-animated');
-      popup.style.visibility = '';
-      popup.style.opacity = '';
-    }, 0);
-  }
-}
-// Находим форму изменения профиля в DOM
-const formElement = document.forms['edit-profile'];
-const nameInput = formElement.querySelector('.popup__input_type_name');
-const jobInput = formElement.querySelector('.popup__input_type_description');
-const profileTitle = document.querySelector('.profile__title');
-const profileDescription = document.querySelector('.profile__description');
-
 // Обработчик «отправки» формы, обновление профиля
-function handleFormSubmit(evt) {
+function profileFormSubmit(evt) {
     evt.preventDefault();
     profileTitle.textContent = nameInput.value;
     profileDescription.textContent = jobInput.value;
-    document.querySelector('.popup_type_edit').classList.remove('popup_is-opened');
+    const newProfile = document.querySelector('.popup_type_edit');
+    closePopup(newProfile);
 }
 
 // Прикрепляем обработчик к форме для обработки события «submit»
-formElement.addEventListener('submit', handleFormSubmit);
+profileForm.addEventListener('submit', profileFormSubmit);
+
+
+
+
 
 
 

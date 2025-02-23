@@ -1,5 +1,5 @@
 // Функция создания карточки
-export function createCard(card) {
+export function createCard(card, deleteCard, toggleLike, handleImageClick) {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
 
@@ -28,26 +28,5 @@ export function deleteCard(event) {
   card.remove();
 }
 
-// Функция открытия модального окна с картинкой
-export function handleImageClick(card) {
-  const popup = document.querySelector('.popup_type_image');
-  const popupImage = popup.querySelector('.popup__image');
-  const popupCaption = popup.querySelector('.popup__caption');
 
-  popupImage.src = card.link;
-  popupImage.alt = card.name;
-  popupCaption.textContent = card.name;
-
-  popup.style.visibility = 'hidden';
-  popup.style.opacity = '0';
-
-  if (!popup.classList.contains('popup_is-opened')) {
-    popup.classList.add('popup_is-opened');
-    setTimeout(() => {
-      popup.classList.add('popup_is-animated');
-      popup.style.visibility = '';
-      popup.style.opacity = '';
-    }, 0);
-  }
-}
 
