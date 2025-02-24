@@ -30,7 +30,7 @@ function addNewCard(card) {
 }
 
 // Обработчик отправки формы добавления карточки
-function profileAddCardFormSubmit(evt) {
+function addProfileCardFormSubmit(evt) {
   evt.preventDefault();
   const name = newCardForm.elements['place-name'].value;
   const link = newCardForm.elements['link'].value;
@@ -41,7 +41,7 @@ function profileAddCardFormSubmit(evt) {
   newCardForm.reset();
 }
 
-newCardForm.addEventListener('submit', profileAddCardFormSubmit);
+newCardForm.addEventListener('submit', addProfileCardFormSubmit);
 
 //ЗАКОНЧИЛ СОЗДАВАТЬ И УДАЛЯТЬ КАРТОЧКИ
 
@@ -88,14 +88,11 @@ function handleImageClick(card) {
 const popups = document.querySelectorAll('.popup');
 
 popups.forEach((popup) => {
-  popup.querySelector('.popup__close').addEventListener('click', closePopupByButtonClick);
+  popup.querySelector('.popup__close').addEventListener('click', handleClosePopupByClickOnButton);
 });
 
-
-
-
 // Закрытие попапа при клике на кнопку
-function closePopupByButtonClick(event) {
+function handleClosePopupByClickOnButton(event) {
   if (event.target.classList.contains('popup__close')) {
     const popup = event.target.closest('.popup');
     
@@ -106,7 +103,7 @@ function closePopupByButtonClick(event) {
 
 
 // Обработчик «отправки» формы обновления профиля
-function profileFormSubmit(evt) {
+function submitProfileForm(evt) {
     evt.preventDefault();
     profileTitle.textContent = nameInput.value;
     profileDescription.textContent = jobInput.value;
@@ -115,7 +112,7 @@ function profileFormSubmit(evt) {
 }
 
 // Прикрепляем обработчик к форме для обработки события «submit»
-profileForm.addEventListener('submit', profileFormSubmit);
+profileForm.addEventListener('submit', submitProfileForm);
 
 
 
