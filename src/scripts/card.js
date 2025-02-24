@@ -2,16 +2,21 @@
 export function createCard(card, deleteCard, toggleLike, handleImageClick) {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
+  const cardTitle = cardElement.querySelector('.card__title');
+  const cardImage = cardElement.querySelector('.card__image');
+  const cardDeleteButton = cardElement.querySelector('.card__delete-button');
+  const cardLikeButton = cardElement.querySelector('.card__like-button');
+   
 
   // Устанавливаю значения вложенных элементов
-  cardElement.querySelector('.card__title').textContent = card.name;
-  cardElement.querySelector('.card__image').src = card.link;
-  cardElement.querySelector('.card__image').alt = card.name;
+  cardTitle.textContent = card.name;
+  cardImage.src = card.link;
+  cardImage.alt = card.name;
 
   // Добавляю обработчики кликов
-  cardElement.querySelector('.card__delete-button').addEventListener('click', deleteCard);
-  cardElement.querySelector('.card__like-button').addEventListener('click', toggleLike);
-  cardElement.querySelector('.card__image').addEventListener('click', handleImageClick.bind(null, card));
+  cardDeleteButton.addEventListener('click', deleteCard);
+  cardLikeButton.addEventListener('click', toggleLike);
+  cardImage.addEventListener('click', handleImageClick.bind(null, card));
 
   return cardElement;
 }

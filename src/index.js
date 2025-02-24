@@ -9,6 +9,12 @@ const nameInput = profileForm.querySelector('.popup__input_type_name');
 const jobInput = profileForm.querySelector('.popup__input_type_description');
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
+const popupEdit = document.querySelector('.popup_type_edit');
+const popupNewCard = document.querySelector('.popup_type_new-card');
+const popups = document.querySelectorAll('.popup');
+const popupTypeImage = document.querySelector('.popup_type_image');
+const popupImage = popupTypeImage.querySelector('.popup__image');
+const popupCaption = popupTypeImage.querySelector('.popup__caption');
 
 
 // Вывожу все карточки из массива на страницу
@@ -52,11 +58,10 @@ const profileEditButton = document.querySelector('.profile__edit-button');
 profileEditButton.addEventListener('click', openEditPopup);
 //Функция открывающая модальное окно редактирования профиля
 function openEditPopup() {
-  const popup = document.querySelector('.popup_type_edit');
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
   
-  openPopup(popup); 
+  openPopup(popupEdit); 
 }
 
 // Кнопка отрытия модального окна добавления карточки
@@ -64,28 +69,22 @@ const cardAddButton = document.querySelector('.profile__add-button');
 cardAddButton.addEventListener('click', addCardPopup); 
 //Функция открывающая модальное окно добавления карточки
 function addCardPopup() {
-  const popup = document.querySelector('.popup_type_new-card');
-  
-  openPopup(popup);
+  openPopup(popupNewCard);
 }
 
 // Функция открытия модального окна с картинкой
 function handleImageClick(card) {
-  const popup = document.querySelector('.popup_type_image');
-  const popupImage = popup.querySelector('.popup__image');
-  const popupCaption = popup.querySelector('.popup__caption');
-
   popupImage.src = card.link;
   popupImage.alt = card.name;
   popupCaption.textContent = card.name;
 
-  openPopup(popup);
+  openPopup(popupTypeImage);
 }
 // ЗАКОНЧИЛИ ФУНКЦИОНАЛ ОТКРЫТИЯ МОДАЛЬНЫХ ОКОН
 
 
 // ФУНКЦИОНАЛ ЗАКРЫТИЯ МОДАЛЬНЫХ ОКОН
-const popups = document.querySelectorAll('.popup');
+
 
 popups.forEach((popup) => {
   popup.querySelector('.popup__close').addEventListener('click', handleClosePopupByClickOnButton);
