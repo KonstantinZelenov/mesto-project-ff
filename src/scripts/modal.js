@@ -4,6 +4,7 @@ export function openPopup(popup) {
   setTimeout(() => {
    popup.classList.add('popup_is-opened'); 
   }, 50);
+
   document.addEventListener('keydown', closePopupOnEsc);
   document.addEventListener('click', closeByOverlayClick);
 }
@@ -13,6 +14,11 @@ export function closePopup(popup) {
   popup.classList.remove('popup_is-opened');
   document.removeEventListener('keydown', closePopupOnEsc);
   document.removeEventListener('click', closeByOverlayClick);
+
+  const formElement = popup.querySelector('.popup__form');
+  if (formElement) {
+    formElement.reset(); 
+  }
 }
 
 // Закрытие попапа при нажатии клавиши "Escape"
