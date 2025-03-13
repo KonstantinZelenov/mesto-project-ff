@@ -6,17 +6,6 @@ export const config = {
   }
 };
 
-// Функция для обновления аватара
-export const updateAvatar = (avatarLink) => {
-  return fetch(`${config.baseUrl}/users/me/avatar`, {
-    method: 'PATCH',
-    headers: config.headers,
-    body: JSON.stringify({
-      avatar: avatarLink
-    })
-  });
-};
-
 // Загрузка данных пользователя
 export const fetchUserData = () => {
   return fetch(`${config.baseUrl}/users/me`, {
@@ -41,6 +30,36 @@ export const fetchCards = () => {
     }
     return res.json();
   });
+};
+
+// Функция для обновления аватара
+export const updateAvatar = (avatarLink) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: avatarLink
+    })
+  })
+  .then(res => {
+    if (!res.ok) {
+      throw new Error(`Ошибка: ${res.status}`);
+    }
+    return res.json();
+  })
+};
+
+// Функция для проверки MIME-типа изображения
+export const isImageUrl = (url) => {
+  return fetch(url, { method: 'HEAD' })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Ошибка при проверке ссылки');
+      }
+      const contentType = res.headers.get('Content-Type');
+      return contentType && contentType.startsWith('image');
+    })
+    .catch(() => false);
 };
 
 // Функция для добавления новой карточки

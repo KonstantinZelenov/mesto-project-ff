@@ -1,4 +1,4 @@
-export function createCard(card, deleteCardCallback, toggleLikeCallback, handleImageClick, userId) {
+export function createCard(card, openDeleteConfirmationPopup, handleToggleLike, handleImageClick, userId) {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
   const cardTitle = cardElement.querySelector('.card__title');
@@ -23,8 +23,8 @@ export function createCard(card, deleteCardCallback, toggleLikeCallback, handleI
   }
 
   // Обработчики событий
-  cardDeleteButton.addEventListener('click', () => deleteCardCallback(card._id, cardElement));
-  cardLikeButton.addEventListener('click', () => toggleLikeCallback(card._id, cardLikeButton, cardLikesNumber));
+  cardDeleteButton.addEventListener('click', () => openDeleteConfirmationPopup(card._id, cardElement));
+  cardLikeButton.addEventListener('click', () => handleToggleLike(card._id, cardLikeButton, cardLikesNumber));
   cardImage.addEventListener('click', () => handleImageClick(card));
 
   return cardElement;

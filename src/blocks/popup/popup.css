@@ -21,3 +21,27 @@
   right: 0;
   z-index: 10;
 }
+
+.popup__input_type_error {
+  border-bottom-color: red;
+  margin-bottom: 0px;
+} 
+
+.popup__input:focus {
+  outline: none;
+}
+
+.popup__input-error {
+  color: red;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.popup__new-avatar {
+  min-height: 272px; 
+}
+
+.popup__delete-card {
+  min-height: 181px;
+}

@@ -3,7 +3,8 @@ import {openPopup, closePopup} from './scripts/modal.js';
 import {enableValidation, clearValidation, toggleButtonState} from './scripts/validation.js';
 import './pages/index.css';
 import { 
-  updateAvatar, 
+  updateAvatar,
+  isImageUrl, 
   fetchUserData, 
   fetchCards, 
   addCard, 
@@ -29,6 +30,19 @@ const profileImage = document.querySelector('.profile__image');
 const profileImageContainer = document.querySelector('.profile__image-container');
 const popupChangeAvatar = document.querySelector('.popup_type_change-avatar');
 const avatarForm = document.forms['new-avatar'];
+const popupDeleteConfirm = document.querySelector('.popup_type_delete-card-confirm');
+const deleteConfirmButton = document.querySelector('.popup_type_delete-card-confirm .popup__button');
+
+// ЗАГРУЗКА ДАННЫХ С СЕРВЕРА
+Promise.all([fetchUserData(), fetchCards()])
+  .then(([userData, cardsData]) => {
+    userId = userData._id; 
+    updateUserProfile(userData);
+    renderCards(cardsData, userId);
+  })
+  .catch(error => {
+    console.error('Ошибка при загрузке данных:', error);
+  });
 
 // ЗАПУСКАЮ ВАЛИДАЦИЮ
 const validationSettings = {
@@ -39,7 +53,6 @@ const validationSettings = {
   inputErrorClass: 'popup__input_type_error'
 };
 
-// Включаю валидацию для всех форм
 enableValidation(validationSettings);
 
 // МЕНЯЮ АВАТАР
@@ -49,6 +62,16 @@ profileImageContainer.addEventListener('click', () => {
   openPopup(popupChangeAvatar);
 });
 
+// Функция для проверки валидности URL
+function isValidUrl(url) {
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 // Обработчик отправки формы изменения аватара
 function changeAvatarFormSubmit(evt) {
   evt.preventDefault();
@@ -57,21 +80,30 @@ function changeAvatarFormSubmit(evt) {
   const resetButton = changeButtonText(submitButton, 'Сохранение...');
   const avatarLink = avatarForm.elements['avatar_link'].value;
 
-  // Вызываю функцию updateAvatar из api.js
-  updateAvatar(avatarLink)
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`Ошибка: ${res.status}`);
+  // Проверка валидности URL
+  if (!isValidUrl(avatarLink)) {
+    console.error('Некорректная ссылка на аватар');
+    alert('Пожалуйста, введите корректную ссылку.');
+    resetButton();
+    return;
+  }
+
+  // Проверка, что ссылка ведет на изображение
+  isImageUrl(avatarLink)
+    .then(isImage => {
+      if (!isImage) {
+        throw new Error('Ссылка не ведет на изображение');
       }
-      return res.json();
+      return updateAvatar(avatarLink); 
     })
     .then(data => {
-      profileImage.style.backgroundImage = `url(${data.avatar})`;
-      closePopup(popupChangeAvatar);
-      avatarForm.reset();
+      profileImage.style.backgroundImage = `url(${data.avatar})`; 
+      closePopup(popupChangeAvatar); 
+      avatarForm.reset(); 
     })
     .catch(error => {
       console.error('Ошибка при обновлении аватара:', error);
+      alert(error.message); 
     })
     .finally(() => {
       resetButton(); 
@@ -91,7 +123,7 @@ function addNewCard(card, userId) {
     likes: [] 
   };
 
-  const newCardElement = createCard(fullCard, handleDeleteCard, handleToggleLike, handleImageClick, userId);
+  const newCardElement = createCard(fullCard, openDeleteConfirmationPopup, handleToggleLike, handleImageClick, userId);
   placesList.prepend(newCardElement);
 }
 
@@ -131,10 +163,54 @@ function renderCards(cards, userId) {
   }
 
   cards.forEach(card => {
-    const cardElement = createCard(card, handleDeleteCard, handleToggleLike, handleImageClick, userId);
+    const cardElement = createCard(card, openDeleteConfirmationPopup, handleToggleLike, handleImageClick, userId);
     placesList.append(cardElement);
   });
 }
+
+// Обработчик удаления карточки
+function handleDeleteCard(cardId, cardElement) {
+  deleteCard(cardId)
+    .then(() => {
+      cardElement.remove();
+    })
+    .catch(error => {
+      console.error('Ошибка при удалении карточки:', error);
+    });
+}
+
+// Обработчик лайка
+function handleToggleLike(cardId, likeButton, likesNumberElement) {
+  const isLiked = likeButton.classList.contains('card__like-button_is-active');
+  toggleLike(cardId, isLiked)
+    .then(updatedCard => {
+      likesNumberElement.textContent = updatedCard.likes.length;
+      likeButton.classList.toggle('card__like-button_is-active');
+    })
+    .catch(error => {
+      console.error('Ошибка при обновлении лайка:', error);
+    });
+}
+
+let currentCardId = null;
+let currentCardElement = null;
+
+// Функция открытия формы подтверждения удаления карточки
+function openDeleteConfirmationPopup(cardId, cardElement) {
+  currentCardId = cardId;
+  currentCardElement = cardElement;
+  openPopup(popupDeleteConfirm);
+}
+
+// Слушатель подтверждения удаления карточки
+deleteConfirmButton.addEventListener('click', () => {
+  if (currentCardId && currentCardElement) {
+    handleDeleteCard(currentCardId, currentCardElement);
+    closePopup(popupDeleteConfirm);
+    currentCardId = null;
+    currentCardElement = null;
+  }
+});
 
 //ЗАКОНЧИЛ СОЗДАВАТЬ И УДАЛЯТЬ КАРТОЧКИ
 
@@ -233,22 +309,10 @@ function editProfileFormSubmit(evt) {
       resetButton(); // Возвращаем исходный текст кнопки
     });
 }
-
-// Назначаем обработчик формы
 profileForm.addEventListener('submit', editProfileFormSubmit);
-
 // ЗАКОНЧИЛ РАБОТУ С ПРОФИЛЕМ ПОЛЬЗОВАТЕЛЯ
 
-// Загрузка данных и отображение
-Promise.all([fetchUserData(), fetchCards()])
-  .then(([userData, cardsData]) => {
-    userId = userData._id; 
-    updateUserProfile(userData);
-    renderCards(cardsData, userId);
-  })
-  .catch(error => {
-    console.error('Ошибка при загрузке данных:', error);
-  });
+
 
 // Меняем текст кнопки
 function changeButtonText(button, newText, callback) {
@@ -262,28 +326,11 @@ function changeButtonText(button, newText, callback) {
   };
 }
 
-// Обработчик удаления карточки
-function handleDeleteCard(cardId, cardElement) {
-  deleteCard(cardId)
-    .then(() => {
-      cardElement.remove();
-    })
-    .catch(error => {
-      console.error('Ошибка при удалении карточки:', error);
-    });
-}
 
-// Обработчик лайка
-function handleToggleLike(cardId, likeButton, likesNumberElement) {
-  const isLiked = likeButton.classList.contains('card__like-button_is-active');
-  toggleLike(cardId, isLiked)
-    .then(updatedCard => {
-      likesNumberElement.textContent = updatedCard.likes.length;
-      likeButton.classList.toggle('card__like-button_is-active');
-    })
-    .catch(error => {
-      console.error('Ошибка при обновлении лайка:', error);
-    });
-}
+
+
+
+
+
 
 
