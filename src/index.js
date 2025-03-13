@@ -62,15 +62,6 @@ profileImageContainer.addEventListener('click', () => {
   openPopup(popupChangeAvatar);
 });
 
-// Функция для проверки валидности URL
-function isValidUrl(url) {
-  try {
-    new URL(url);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
 
 // Обработчик отправки формы изменения аватара
 function changeAvatarFormSubmit(evt) {
@@ -79,14 +70,6 @@ function changeAvatarFormSubmit(evt) {
   const submitButton = avatarForm.querySelector(validationSettings.submitButtonSelector);
   const resetButton = changeButtonText(submitButton, 'Сохранение...');
   const avatarLink = avatarForm.elements['avatar_link'].value;
-
-  // Проверка валидности URL
-  if (!isValidUrl(avatarLink)) {
-    console.error('Некорректная ссылка на аватар');
-    alert('Пожалуйста, введите корректную ссылку.');
-    resetButton();
-    return;
-  }
 
   // Проверка, что ссылка ведет на изображение
   isImageUrl(avatarLink)
@@ -158,15 +141,15 @@ newCardForm.addEventListener('submit', addProfileCardFormSubmit);
 function renderCards(cards, userId) {
   const placesList = document.querySelector('.places__list');
   
-  while (placesList.firstChild) {
-    placesList.removeChild(placesList.firstChild);
-  }
+  // Создаем массив новых карточек
+  const newCards = cards.map(card => 
+    createCard(card, openDeleteConfirmationPopup, handleToggleLike, handleImageClick, userId)
+  );
 
-  cards.forEach(card => {
-    const cardElement = createCard(card, openDeleteConfirmationPopup, handleToggleLike, handleImageClick, userId);
-    placesList.append(cardElement);
-  });
+  // Заменяем все дочерние элементы на новые карточки
+  placesList.replaceChildren(...newCards);
 }
+
 
 // Обработчик удаления карточки
 function handleDeleteCard(cardId, cardElement) {
@@ -224,24 +207,18 @@ function openEditPopup() {
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
 
+  // Очищаем ошибки и обновляем состояние кнопки
   clearValidation(profileForm, validationSettings);
 
-  // Обновляю состояние кнопки после подстановки данных
-  const inputList = Array.from(profileForm.querySelectorAll('.popup__input'));
-  const buttonElement = profileForm.querySelector('.popup__button');
-  toggleButtonState(inputList, buttonElement, {
-    inactiveButtonClass: 'popup__button-disabled'
-  });
-  
-  openPopup(popupEdit); 
+  openPopup(popupEdit);
 }
 
 // Кнопка отрытия модального окна добавления карточки
 const cardAddButton = document.querySelector('.profile__add-button');
-cardAddButton.addEventListener('click', addCardPopup); 
+cardAddButton.addEventListener('click', openAddCardPopup); 
 
 //Функция открывающая модальное окно добавления карточки
-function addCardPopup() {
+function openAddCardPopup() {
   // Очищаем ошибки валидации и деактивируем кнопку
   clearValidation(popupNewCard, validationSettings);
 
@@ -325,6 +302,10 @@ function changeButtonText(button, newText, callback) {
     if (callback) callback(); // Выполняем переданный колбэк
   };
 }
+
+
+
+
 
 
 

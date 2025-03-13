@@ -14,7 +14,10 @@ export function createCard(card, openDeleteConfirmationPopup, handleToggleLike, 
 
   // Проверяем, принадлежит ли карточка текущему пользователю
   if (card.owner._id !== userId) {
-    cardDeleteButton.style.display = 'none';
+    cardDeleteButton.style.display = 'none'; // Скрываем кнопку удаления
+  } else {
+    // Добавляем обработчик только если кнопка видима
+    cardDeleteButton.addEventListener('click', () => openDeleteConfirmationPopup(card._id, cardElement));
   }
 
   // Проверяем, лайкнул ли текущий пользователь карточку
@@ -23,7 +26,6 @@ export function createCard(card, openDeleteConfirmationPopup, handleToggleLike, 
   }
 
   // Обработчики событий
-  cardDeleteButton.addEventListener('click', () => openDeleteConfirmationPopup(card._id, cardElement));
   cardLikeButton.addEventListener('click', () => handleToggleLike(card._id, cardLikeButton, cardLikesNumber));
   cardImage.addEventListener('click', () => handleImageClick(card));
 

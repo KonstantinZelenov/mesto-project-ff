@@ -33,7 +33,13 @@ function isValid(formElement, inputElement, config) {
   }
 }
 
-// Функция для очистки ошибок валидации и деактивации кнопки
+// Функция для деактивации кнопки отправки
+const disableSubmitButton = (buttonElement, config) => {
+  buttonElement.disabled = true;
+  buttonElement.classList.add(config.inactiveButtonClass);
+};
+
+// Функция для очистки ошибок валидации и управления состоянием кнопки
 export function clearValidation(formElement, config) {
   const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
   const buttonElement = formElement.querySelector(config.submitButtonSelector);
@@ -43,9 +49,8 @@ export function clearValidation(formElement, config) {
     hideInputError(formElement, inputElement, config);
   });
 
-  // Делаем кнопку неактивной
-  buttonElement.disabled = true;
-  buttonElement.classList.add(config.inactiveButtonClass);
+  // Управляем состоянием кнопки
+  toggleButtonState(inputList, buttonElement, config);
 }
 
 // Функция для проверки, есть ли невалидные поля
@@ -58,8 +63,7 @@ function hasInvalidInput(inputList) {
 // Функция для изменения состояния кнопки
 export function toggleButtonState(inputList, buttonElement, config) {
   if (hasInvalidInput(inputList)) {
-    buttonElement.disabled = true;
-    buttonElement.classList.add(config.inactiveButtonClass);
+    disableSubmitButton(buttonElement, config);
   } else {
     buttonElement.disabled = false;
     buttonElement.classList.remove(config.inactiveButtonClass);
