@@ -99,13 +99,6 @@ avatarForm.addEventListener('submit', changeAvatarFormSubmit);
 // ДОБАВЛЯЮ И УДАЛЯЮ КАРТОЧКИ
 // Функция добавления новой карточки
 function addNewCard(card, userId) {
-  // Добавляем свойство owner с _id текущего пользователя
-  const fullCard = {
-    ...card,
-    owner: { _id: userId },
-    likes: [] 
-  };
-
   const newCardElement = createCard(fullCard, openDeleteConfirmationPopup, handleToggleLike, handleImageClick, userId);
   placesList.prepend(newCardElement);
 }
